@@ -24,14 +24,20 @@ class BasedDigit:
     value: int
     base: int
 
+def get_bases(based_digits: list[BasedDigit]):
+    bases = []
+    for based_digit in based_digits:
+        bases.append(based_digit.base)
+    return bases
+
 Bit = int
 Base = int
 
-def encode(values: list[int], bases: list[Base]) -> list[Bit]:
+def encode(based_digits: list[BasedDigit]) -> list[Bit]:
     final_number = BasedNumber(digits=[1], base=2)
-    for value, base in zip(values, bases):
-        final_number.convert(new_base=base)
-        final_number.digits.append(value)
+    for based_digit in based_digits:
+        final_number.convert(new_base=based_digit.base)
+        final_number.digits.append(based_digit.value)
     final_number.convert(new_base=2)
     final_number.digits.pop(0) # Leftmost "1"
     return final_number.digits
@@ -45,11 +51,14 @@ def decode(encoded_values: list[Bit], bases: list[Base]) -> list[int]:
     return values[::-1]
 
 def main():
-    bases = [Base(20), Base(3), Base(2)]
-    print(f"{bases = }")
-    values = [18, 2, 1]
-    print(f"{values = }")
-    encoded_values = encode(values, bases)
+    based_digits = [
+        BasedDigit(base=20, value=18),
+        BasedDigit(base=3, value=2),
+        BasedDigit(base=2, value=1),
+    ]
+    bases = get_bases(based_digits)
+    print(f"{based_digits = }")
+    encoded_values = encode(based_digits)
     print(f"{encoded_values = }")
     decoded_values = decode(encoded_values, bases)
     print(f"{decoded_values = }")
