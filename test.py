@@ -13,7 +13,7 @@ class BasedNumber:
 
         reversed_digits = []
         while self_as_number:
-            reversed_digits.append(int(self_as_number % new_base))
+            reversed_digits.append(self_as_number % new_base)
             self_as_number //= new_base
 
         self.base = new_base
