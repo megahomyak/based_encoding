@@ -1,11 +1,17 @@
 from dataclasses import dataclass
 
+class BaseTooSmall(Exception):
+    pass
+
 @dataclass
 class BasedNumber:
-    digits: list[int]
-    base: int
+    def __init__(self) -> None:
+        self.digits: list[int] = []
+        self.base: int = 2
 
-    def convert(self, new_base):
+    def convert(self, new_base: int):
+        if new_base < 1:
+            raise 
         self_as_number = 0
 
         for index, digit in enumerate(self.digits[::-1]):
@@ -42,7 +48,7 @@ def encode(based_digits: list[BasedDigit]) -> list[Bit]:
     return final_number.digits
 
 def decode(encoded_values: list[Bit], bases: list[Base]) -> list[int]:
-    final_number = BasedNumber(digits=[] + encoded_values, base=2)
+    final_number = BasedNumber(digits=encoded_values, base=2)
     values = []
     for base in bases[::-1]:
         final_number.convert(base)
