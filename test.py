@@ -34,25 +34,27 @@ Bit = int
 Base = int
 
 def encode(based_digits: list[BasedDigit]) -> list[Bit]:
-    final_number = BasedNumber(digits=[1], base=2)
+    final_number = BasedNumber(digits=[], base=2)
     for based_digit in based_digits:
         final_number.convert(new_base=based_digit.base)
         final_number.digits.append(based_digit.value)
     final_number.convert(new_base=2)
-    final_number.digits.pop(0) # Leftmost "1"
     return final_number.digits
 
 def decode(encoded_values: list[Bit], bases: list[Base]) -> list[int]:
-    final_number = BasedNumber(digits=[1] + encoded_values, base=2)
+    final_number = BasedNumber(digits=[] + encoded_values, base=2)
     values = []
     for base in bases[::-1]:
         final_number.convert(base)
-        values.append(final_number.digits.pop())
+        try:
+            values.append(final_number.digits.pop())
+        except IndexError:
+            values.append(0)
     return values[::-1]
 
 def main():
     based_digits = [
-        BasedDigit(base=20, value=18),
+        BasedDigit(base=20, value=0),
         BasedDigit(base=3, value=2),
         BasedDigit(base=2, value=1),
     ]
