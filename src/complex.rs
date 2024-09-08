@@ -17,6 +17,7 @@ pub struct Struct<E, const N: usize> {
     pub last: E,
 }
 
+/*
 impl<E: Entity, const N: usize> Entity for Struct<E, N> {
     type Input = ([E; N], E);
 
@@ -29,3 +30,4 @@ impl<E: Entity, const N: usize> Entity for Struct<E, N> {
         
     }
 }
+*/
