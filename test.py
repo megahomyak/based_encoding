@@ -86,13 +86,12 @@ class BasedNumber:
         except IndexError:
             return UnsignedInt(0)
 
-def based_digit(valid_base: int, value: int):
-    return BasedDigit(ValidBase(UnsignedInt(valid_base)), UnsignedInt(value))
-
-def valid_base(value: int):
-    return ValidBase(UnsignedInt(value))
-
 def main():
+    def based_digit(valid_base: int, value: int):
+        return BasedDigit(ValidBase(UnsignedInt(valid_base)), UnsignedInt(value))
+
+    def valid_base(value: int):
+        return ValidBase(UnsignedInt(value))
     based_number = BasedNumber()
     based_number.write(based_digit(valid_base=20, value=0))
     based_number.write(based_digit(3, 2))
