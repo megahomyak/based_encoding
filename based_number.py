@@ -29,6 +29,9 @@ class ValidBase:
     def value(self) -> UnsignedInt:
         return self._value
 
+    def increase(self, n: UnsignedInt):
+        self._value._value += n.value
+
 class BasedDigit:
     def __init__(self, base: ValidBase, value: UnsignedInt) -> None:
         if base.value.value <= value.value:
@@ -83,7 +86,7 @@ class BasedNumber:
         self.convert(based_digit.base)
         self._digits.append(based_digit.value)
 
-    def read(self, base: ValidBase) -> UnsignedInt:
+    def read_digit(self, base: ValidBase) -> UnsignedInt:
         self.convert(base)
         try:
             return self._digits.pop()
