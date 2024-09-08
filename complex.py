@@ -16,22 +16,30 @@ class Entity(ABC):
     @abstractmethod
     def decode(self, number_input: NumberInput) -> Any:
         pass
+    @abstractmethod
+    def base(self) -> ValidBase:
+        pass
 
 class Struct(Entity):
-    def __init__(self, members: list[Entity]) -> None:
-        self._members = members
+    def __init__(self, rest: list[Entity], last: Entity) -> None:
+        self._last = last
+        self._rest = rest
+    def _members(self) -> list[Entity]:
+        return [*self._rest, self._last]
     def encode(self, value: list) -> Iterator[BasedDigit]:
         return chain(
             *(
                 member.encode(value_item)
-                for value_item, member in zip(value, self._members)
+                for value_item, member in zip(value, self._members())
             )
         )
     def decode(self, number_input: NumberInput) -> Any:
         results = []
-        for member in reversed(self._members):
+        for member in reversed(self._members()):
             results.append(member.decode(number_input))
         return results
+    def base(self) -> ValidBase:
+        return self._last.base()
 
 class Enum(Entity):
     def __init__(self, members: set[str]) -> None:
@@ -48,12 +56,17 @@ class Enum(Entity):
         return self._members_as_list[number_input.read_digit(self._base).value]
 
 class Sequence(Entity):
-    def __init__(self, member: Entity) -> None:
-        self._member = member
-    def encode(self, value: Any) -> Iterator[BasedDigit]:
-        # Think about this
-        pass
+    def __init__(self, member_type: Entity) -> None:
+        self._member_type = member_type
+    def encode(self, value: list) -> Iterator[BasedDigit]:
+        return chain(
+            *(
+                entity.encode()
+                for entity in value
+            )
+        )
     def decode(self, number_input: NumberInput) -> Any:
-        class IncreasedNumberInput:
-            pass
-        self._member.decode()
+        class IncreasedNumberInput(NumberInput):
+            def read_digit(self, base: ValidBase) -> UnsignedInt:
+                return number_input.read_digit(base.increase(UnsignedInt(1)))
+        return 

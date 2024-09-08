@@ -29,8 +29,8 @@ class ValidBase:
     def value(self) -> UnsignedInt:
         return self._value
 
-    def increase(self, n: UnsignedInt):
-        self._value._value += n.value
+    def increase(self, n: UnsignedInt) -> "ValidBase":
+        return ValidBase(UnsignedInt(self.value.value + n.value))
 
 class BasedDigit:
     def __init__(self, base: ValidBase, value: UnsignedInt) -> None:
@@ -47,9 +47,11 @@ class BasedDigit:
     def value(self) -> UnsignedInt:
         return self._value
 
-    def increase(self, n: UnsignedInt):
-        self._value._value += n.value
-        self._base._value._value += n.value
+    def increase(self, n: UnsignedInt) -> "BasedDigit":
+        return BasedDigit(
+            self.base.increase(n),
+            UnsignedInt(self.value.value + n.value),
+        )
 
 @dataclass
 class BasedNumber:
