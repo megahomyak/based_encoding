@@ -1,9 +1,10 @@
-use num_bigint::BigUint;
+pub(self) use num_bigint::BigUint;
 
-pub type BigEndian<T> = T;
+// NEVER fucking make this public
+pub(self) type BigEndian<T> = T;
 pub type Digit = BigUint;
 
-fn one() -> BigUint {
+pub(self) fn one() -> BigUint {
     BigUint::new(vec![1])
 }
 
@@ -21,7 +22,7 @@ impl ValidBase {
         }
     }
 
-    pub fn pow(&self, base: usize) -> Self {
+    pub(self) fn pow(&self, base: usize) -> Self {
         let mut value = one();
         for _ in 0..base {
             value *= &self.value;
