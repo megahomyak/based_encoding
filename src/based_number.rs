@@ -60,8 +60,8 @@ impl BasedNumber {
         }
     }
 
-    pub fn convert(&mut self, new_base: ValidBase) {
-        if new_base == self.base {
+    pub fn convert(&mut self, new_base: &ValidBase) {
+        if new_base == &self.base {
             return;
         }
         let mut self_as_number = BigUint::ZERO;
@@ -85,11 +85,11 @@ impl BasedNumber {
         if self.digits.is_empty() && based_digit.value == BigUint::ZERO {
             return;
         }
-        self.convert(based_digit.base);
+        self.convert(&based_digit.base);
         self.digits.push(based_digit.value);
     }
 
-    pub fn read(&mut self, base: ValidBase) -> Digit {
+    pub fn read(&mut self, base: &ValidBase) -> Digit {
         self.convert(base);
         self.digits.pop().unwrap_or(BigUint::ZERO)
     }

@@ -1,5 +1,7 @@
 mod based_number;
-use based_number::{BasedDigit, ValidBase, BasedNumber};
+mod complex;
+
+use based_number::{BasedDigit, BasedNumber, ValidBase};
 use num_bigint::BigUint;
 
 fn main() {
@@ -16,7 +18,7 @@ fn main() {
     based_number.write(based_digit(20, 15));
     based_number.write(based_digit(3, 2));
     based_number.write(based_digit(2, 1));
-    println!("{}", based_number.read(valid_base(2)));
-    println!("{}", based_number.read(valid_base(3)));
-    println!("{}", based_number.read(valid_base(20)));
+    println!("{}", based_number.read(&valid_base(2)));
+    println!("{}", based_number.read(&valid_base(3)));
+    println!("{}", based_number.read(&valid_base(20)));
 }
