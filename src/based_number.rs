@@ -10,7 +10,7 @@ pub(self) fn one() -> BigUint {
 
 #[derive(PartialEq, Eq, Clone)]
 pub struct ValidBase {
-    value: BigUint,
+    pub(self) value: BigUint,
 }
 
 impl ValidBase {
@@ -33,8 +33,8 @@ impl ValidBase {
 
 #[derive(Clone)]
 pub struct BasedDigit {
-    base: ValidBase,
-    value: BigUint,
+    pub(self) base: ValidBase,
+    pub(self) value: BigUint,
 }
 
 impl BasedDigit {
@@ -48,15 +48,15 @@ impl BasedDigit {
 }
 
 pub struct BasedNumber {
-    base: ValidBase,
-    digits: BigEndian<Vec<BigUint>>,
+    pub(self) base: ValidBase,
+    pub(self) digits: BigEndian<Vec<BigUint>>,
 }
 
 impl BasedNumber {
     pub fn new() -> Self {
         Self {
             base: ValidBase::new(one() + one()).unwrap(),
-            digits: vec![one()],
+            digits: vec![],
         }
     }
 
@@ -82,7 +82,7 @@ impl BasedNumber {
     }
 
     pub fn write(&mut self, based_digit: BasedDigit) {
-        if self.digits.is_empty() && based_digit.value != BigUint::ZERO {
+        if self.digits.is_empty() && based_digit.value == BigUint::ZERO {
             return;
         }
         self.convert(based_digit.base);
