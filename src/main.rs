@@ -1,22 +1,17 @@
 mod number;
 use num_bigint::BigUint;
-use number::{ExclusiveUpperLimit, LimitedNumber, Number, Readable, Writeable};
+
+use number::{Readable, Writeable};
 
 fn main() {
     fn biguint(value: u32) -> BigUint {
         BigUint::new(vec![value])
     }
-    fn limit(value: u32) -> ExclusiveUpperLimit {
-        ExclusiveUpperLimit::new(biguint(value)).unwrap()
-    }
-    fn limited_number(value: u32, limit_: u32) -> LimitedNumber {
-        LimitedNumber::new(biguint(value), limit(limit_)).unwrap()
-    }
-    let mut number = Number::new();
-    number.write(&limited_number(15, 20));
-    number.write(&limited_number(2, 3));
-    number.write(&limited_number(1, 2));
-    println!("{}", number.read(&limit(2)));
-    println!("{}", number.read(&limit(3)));
-    println!("{}", number.read(&limit(20)));
+    let mut number = BigUint::ZERO.clone();
+    number.write(&biguint(15), &biguint(20));
+    number.write(&biguint(2), &biguint(3));
+    number.write(&biguint(1), &biguint(2));
+    println!("{}", number.read(&biguint(2)));
+    println!("{}", number.read(&biguint(3)));
+    println!("{}", number.read(&biguint(20)));
 }
