@@ -55,7 +55,7 @@ pub struct BasedNumber {
 impl BasedNumber {
     pub fn new() -> Self {
         Self {
-            base: ValidBase::new(one()).unwrap(),
+            base: ValidBase { value: one() },
             digits: vec![],
         }
     }

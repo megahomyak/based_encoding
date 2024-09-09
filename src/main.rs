@@ -1,5 +1,5 @@
 mod based_number;
-mod complex;
+mod entity;
 
 use based_number::{BasedDigit, BasedNumber, ValidBase};
 use num_bigint::BigUint;
