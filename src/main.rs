@@ -1,24 +1,23 @@
-mod based_number;
-mod entity;
+mod number;
 
-use based_number::{BasedDigit, BasedNumber, ValidBase};
 use num_bigint::BigUint;
+use number::{ExclusiveUpperLimit, LimitedNumber, Number};
 
 fn main() {
     fn biguint(value: u32) -> BigUint {
         BigUint::new(vec![value])
     }
-    fn valid_base(value: u32) -> ValidBase {
-        ValidBase::new(biguint(value)).unwrap()
+    fn limit(value: u32) -> ExclusiveUpperLimit {
+        ExclusiveUpperLimit::new(biguint(value)).unwrap()
     }
-    fn based_digit(base: u32, value: u32) -> BasedDigit {
-        BasedDigit::new(valid_base(base), biguint(value)).unwrap()
+    fn limited_number(value: u32, limit_: u32) -> LimitedNumber {
+        LimitedNumber::new(biguint(value), limit(limit_)).unwrap()
     }
-    let mut based_number = BasedNumber::new();
-    based_number.write(based_digit(20, 15));
-    based_number.write(based_digit(3, 2));
-    based_number.write(based_digit(2, 1));
-    println!("{}", based_number.read(&valid_base(2)));
-    println!("{}", based_number.read(&valid_base(3)));
-    println!("{}", based_number.read(&valid_base(20)));
+    let mut number = Number::new();
+    number.write(&limited_number(15, 20));
+    number.write(&limited_number(2, 3));
+    number.write(&limited_number(1, 2));
+    println!("{}", number.read(&limit(2)));
+    println!("{}", number.read(&limit(3)));
+    println!("{}", number.read(&limit(20)));
 }
