@@ -51,7 +51,7 @@ impl Bloh {
             item.encode(writer);
         }
     }
-    pub fn decode(reader: &mut impl Readable) -> Self {
+    pub fn decode(mut current: BigUint, reader: &mut impl Readable) -> Self {
         let items = Vec::new();
         struct DecreasingReader<'a> {
             source: &'a mut impl Readable,
