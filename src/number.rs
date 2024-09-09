@@ -27,24 +27,12 @@ impl Digit {
     }
 }
 
-pub trait Readable {
-    fn read(&mut self, base: &Base) -> BigUint;
+fn read(number: &mut BigUint, base: &Base) -> BigUint {
+    let output = &*number % &base.value;
+    *number /= &base.value;
+    output
 }
 
-impl Readable for BigUint {
-    fn read(&mut self, base: &Base) -> BigUint {
-        let output = &*self % &base.value;
-        *self /= &base.value;
-        output
-    }
-}
-
-pub trait Writeable {
-    fn write(&mut self, digit: &Digit);
-}
-
-impl Writeable for BigUint {
-    fn write(&mut self, digit: &Digit) {
-        *self = &*self * &digit.base.value + &digit.value;
-    }
+fn write(number: &mut BigUint, digit: &Digit) {
+    *number = &*number * &digit.base.value + &digit.value;
 }

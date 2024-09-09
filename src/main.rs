@@ -1,4 +1,5 @@
 mod number;
+mod entities;
 use num_bigint::BigUint;
 
 use number::{Base, Digit, Readable, Writeable};
