@@ -1,7 +1,6 @@
 mod number;
-
 use num_bigint::BigUint;
-use number::{ExclusiveUpperLimit, LimitedNumber, Number};
+use number::{ExclusiveUpperLimit, LimitedNumber, Number, Readable, Writeable};
 
 fn main() {
     fn biguint(value: u32) -> BigUint {
