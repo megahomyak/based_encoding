@@ -1,16 +1,14 @@
-mod entity;
 mod number;
-use entity::Entity;
 use num_bigint::BigUint;
 
-use number::{read, write, Base, Digit, represent};
+use number::{read, represent, write, Base, Digit};
 
 /// Supposed to be between 0 and 17
 #[derive(Debug)]
 pub struct NumberA {
     value: BigUint,
 }
-impl Entity for NumberA {
+impl NumberA {
     fn base() -> Base {
         Base {
             value: BigUint::from(18usize),
@@ -31,49 +29,70 @@ impl Entity for NumberA {
     }
 }
 
-/// Supposed to be between 0 and 543
 #[derive(Debug)]
-pub struct NumberB {
-    value: BigUint,
+struct MyString {
+    content: String,
 }
-impl Entity for NumberB {
+impl MyString {
     fn base() -> Base {
         Base {
-            value: BigUint::from(543usize),
+            value: BigUint::from(256usize),
         }
     }
     fn encode(&self, number: &mut BigUint) {
         write(
             number,
             &Digit {
-                value: self.value.clone(),
                 base: Self::base(),
+                value: BigUint::ZERO,
             },
         );
+        for byte in self.content.as_bytes().iter().rev() {
+            write(
+                number,
+                &Digit {
+                    value: BigUint::from(*byte),
+                    base: Self::base(),
+                },
+            );
+        }
     }
     fn decode(number: &mut BigUint) -> Self {
-        let value = read(number, &Self::base());
-        Self { value }
+        let mut bytes = Vec::new();
+        loop {
+            let byte = read(number, &Self::base());
+            if byte == BigUint::ZERO {
+                break;
+            }
+            bytes.push(u8::try_from(byte).unwrap());
+        }
+        Self {
+            content: String::from_utf8(bytes).unwrap(),
+        }
     }
 }
 
 #[derive(Debug)]
 struct Struct {
     number_a: NumberA,
-    number_b: NumberB,
+    my_string: MyString,
 }
-impl Entity for Struct {
+impl Struct {
+    #[allow(dead_code)]
     fn base() -> Base {
         NumberA::base()
     }
     fn encode(&self, number: &mut BigUint) {
-        self.number_b.encode(number);
+        self.my_string.encode(number);
         self.number_a.encode(number);
     }
     fn decode(number: &mut BigUint) -> Self {
         let number_a = NumberA::decode(number);
-        let number_b = NumberB::decode(number);
-        Self { number_a, number_b }
+        let my_string = MyString::decode(number);
+        Self {
+            number_a,
+            my_string,
+        }
     }
 }
 
@@ -83,7 +102,7 @@ enum SequenceItem {
     B(),
     C(Struct),
 }
-impl Entity for SequenceItem {
+impl SequenceItem {
     fn base() -> Base {
         Base {
             value: BigUint::from(3usize),
@@ -141,7 +160,7 @@ impl Entity for SequenceItem {
 struct Sequence {
     pub items: Vec<SequenceItem>,
 }
-impl Entity for Sequence {
+impl Sequence {
     fn base() -> Base {
         Base {
             value: SequenceItem::base().value + 1usize,
@@ -194,24 +213,24 @@ fn main() {
                 number_a: NumberA {
                     value: BigUint::from(5usize),
                 },
-                number_b: NumberB {
-                    value: BigUint::from(500usize),
+                my_string: MyString {
+                    content: String::from("hello!"),
                 },
             }),
             SequenceItem::C(Struct {
                 number_a: NumberA {
                     value: BigUint::from(10usize),
                 },
-                number_b: NumberB {
-                    value: BigUint::from(473usize),
+                my_string: MyString {
+                    content: String::from("hi!"),
                 },
             }),
             SequenceItem::A(Struct {
                 number_a: NumberA {
                     value: BigUint::from(0usize),
                 },
-                number_b: NumberB {
-                    value: BigUint::from(0usize),
+                my_string: MyString {
+                    content: String::from("*laughter*"),
                 },
             }),
             SequenceItem::B(),
@@ -221,6 +240,22 @@ fn main() {
     sequence.encode(&mut number);
     let sequence = Sequence::decode(&mut number.clone());
     println!("{:?}", sequence);
-    println!("{:?}", represent(number.clone(), Base { value: BigUint::from(256usize) }));
-    println!("{:?}", represent(number.clone(), Base { value: BigUint::from(2usize) }));
+    println!(
+        "{:?}",
+        represent(
+            number.clone(),
+            Base {
+                value: BigUint::from(256usize)
+            }
+        )
+    );
+    println!(
+        "{:?}",
+        represent(
+            number.clone(),
+            Base {
+                value: BigUint::from(2usize)
+            }
+        )
+    );
 }
