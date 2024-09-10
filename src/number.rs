@@ -1,5 +1,27 @@
 use num_bigint::BigUint;
 
+/*
+pub struct Uint {
+    value: BigUint,
+}
+impl Uint {
+    pub fn new(value: BigUint) -> Self {
+        Self { value }
+    }
+    pub fn increment(&self) -> Uint {
+        Uint { value: &self.value + 1u8 }
+    }
+    pub fn decrement(&self) -> Option<Uint> {
+        if self.value == BigUint::ZERO {
+            None
+        } else {
+            Some(Uint { value })
+        }
+    }
+}
+*/
+
+#[derive(Debug)]
 pub struct Base {
     value: BigUint,
 }
@@ -12,11 +34,18 @@ impl Base {
         }
     }
 
+    pub fn increment(&self) -> Self {
+        Base {
+            value: &self.value + 1u8,
+        }
+    }
+
     pub fn value(&self) -> &BigUint {
         &self.value
     }
 }
 
+#[derive(Debug)]
 pub struct Digit {
     base: Base,
     value: BigUint,

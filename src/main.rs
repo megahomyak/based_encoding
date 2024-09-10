@@ -22,6 +22,7 @@ use shortcuts as s;
 mod number_a {
     use super::*;
 
+    #[derive(Debug)]
     pub struct NumberA {
         digit: Digit,
     }
@@ -49,6 +50,7 @@ use number_a::NumberA;
 mod number_b {
     use super::*;
 
+    #[derive(Debug)]
     pub struct NumberB {
         digit: Digit,
     }
@@ -72,11 +74,11 @@ mod number_b {
 }
 use number_b::NumberB;
 
+#[derive(Debug)]
 struct Struct {
     number_a: NumberA,
     number_b: NumberB,
 }
-
 impl Struct {
     fn base() -> Base {
         NumberA::base()
@@ -149,6 +151,13 @@ impl Sequence {
         }
     }
     fn decode(number: &mut BigUint) -> Self {
+        fn subtract(minuend: &BigUint, subtrahend: &BigUint) -> Option<BigUint> {
+            if subtrahend > minuend {
+                None
+            } else {
+                Some(minuend - subtrahend)
+            }
+        }
         let mut items = Vec::new();
         loop {
             let num = read(number, &Self::base());
@@ -157,7 +166,11 @@ impl Sequence {
             }
             write(
                 number,
-                &Digit::new(num - 1u8, SequenceItem::base()).unwrap(),
+                &Digit::new(
+                    subtract(&num, &s::biguint(1)).unwrap(),
+                    SequenceItem::base(),
+                )
+                .unwrap(),
             );
             items.push(SequenceItem::decode(number));
         }
@@ -170,10 +183,17 @@ fn main() {
     let sequence = Sequence {
         items: vec![
             SequenceItem::A(Struct {
-                number_a: NumberA { value: 5 },
+                number_a: NumberA::new(s::biguint(5)).unwrap(),
+                number_b: NumberB::new(s::biguint(500)).unwrap(),
             }),
-            SequenceItem::C(),
-            SequenceItem::A(),
+            SequenceItem::C(Struct {
+                number_a: NumberA::new(s::biguint(10)).unwrap(),
+                number_b: NumberB::new(s::biguint(473)).unwrap(),
+            }),
+            SequenceItem::A(Struct {
+                number_a: NumberA::new(s::biguint(0)).unwrap(),
+                number_b: NumberB::new(s::biguint(0)).unwrap(),
+            }),
             SequenceItem::B(),
         ],
     };
