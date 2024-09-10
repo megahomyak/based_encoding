@@ -1,0 +1,48 @@
+[
+    {
+        "type": "number",
+        "name": "NumberA",
+        "base": "18"
+    },
+    {
+        "type": "string",
+        "name": "MyString"
+    },
+    {
+        "type": "struct",
+        "name": "Struct",
+        "fields": [
+            {
+                "name": "number_a",
+                "type": "NumberA"
+            },
+            {
+                "name": "my_string",
+                "type": "MyString"
+            }
+        ]
+    },
+    {
+        "type": "enum",
+        "name": "Enum",
+        "variants": [
+            {
+                "name": "A",
+                "associated_type": "Struct"
+            },
+            {
+                "name": "B",
+                "associated_type": null
+            },
+            {
+                "name": "C",
+                "associated_type": "Struct"
+            }
+        ]
+    },
+    {
+        "type": "sequence",
+        "name": "Sequence",
+        "content_type": "Enum"
+    }
+]
