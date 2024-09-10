@@ -11,6 +11,10 @@ impl Base {
             None
         }
     }
+
+    pub fn value(&self) -> &BigUint {
+        &self.value
+    }
 }
 
 pub struct Digit {
@@ -25,14 +29,22 @@ impl Digit {
             None
         }
     }
+
+    pub fn value(&self) -> &BigUint {
+        &self.value
+    }
+
+    pub fn base(&self) -> &Base {
+        &self.base
+    }
 }
 
-fn read(number: &mut BigUint, base: &Base) -> BigUint {
+pub fn read(number: &mut BigUint, base: &Base) -> BigUint {
     let output = &*number % &base.value;
     *number /= &base.value;
     output
 }
 
-fn write(number: &mut BigUint, digit: &Digit) {
+pub fn write(number: &mut BigUint, digit: &Digit) {
     *number = &*number * &digit.base.value + &digit.value;
 }
