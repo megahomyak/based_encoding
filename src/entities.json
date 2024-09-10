@@ -1,48 +1,407 @@
 [
     {
-        "type": "number",
-        "name": "NumberA",
-        "base": "18"
+        "type": "sequence",
+        "name": "Page",
+        "content_type": "Tag"
+    },
+    {
+        "type": "sequence",
+        "name": "TagSequence",
+        "content_type": "Tag"
     },
     {
         "type": "string",
-        "name": "MyString"
+        "name": "DaletString"
     },
     {
         "type": "struct",
-        "name": "Struct",
+        "name": "HContents",
         "fields": [
             {
-                "name": "number_a",
-                "type": "NumberA"
+                "name": "tbody",
+                "type": "TBody"
             },
             {
-                "name": "my_string",
-                "type": "MyString"
+                "name": "hl",
+                "type": "Hl"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "RowContents",
+        "fields": [
+            {
+                "name": "tags",
+                "type": "TagSequence"
+            },
+            {
+                "name": "alignment",
+                "type": "AlignArg"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "LinkContents",
+        "fields": [
+            {
+                "name": "body",
+                "type": "Body"
+            },
+            {
+                "name": "targ",
+                "type": "TArg"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "NavlinkContents",
+        "fields": [
+            {
+                "name": "body",
+                "type": "Body"
+            },
+            {
+                "name": "targ",
+                "type": "TArg"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "BtnContents",
+        "fields": [
+            {
+                "name": "body",
+                "type": "Body"
+            },
+            {
+                "name": "targ",
+                "type": "TArg"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "FootnContents",
+        "fields": [
+            {
+                "name": "tbody",
+                "type": "TBody"
+            },
+            {
+                "name": "nnarg",
+                "type": "NNArg"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "NavbtnContents",
+        "fields": [
+            {
+                "name": "body",
+                "type": "Body"
+            },
+            {
+                "name": "targ",
+                "type": "TArg"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "BlockContents",
+        "fields": [
+            {
+                "name": "nnbody",
+                "type": "NNBody"
+            },
+            {
+                "name": "alignment",
+                "type": "AlignArg"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "CodeContents",
+        "fields": [
+            {
+                "name": "tbody",
+                "type": "TBody"
+            },
+            {
+                "name": "tnullarg",
+                "type": "TNullArg"
+            }
+        ]
+    },
+    {
+        "type": "struct",
+        "name": "MetaContents",
+        "fields": [
+            {
+                "name": "tbody",
+                "type": "TBody"
+            },
+            {
+                "name": "targ",
+                "type": "TArg"
             }
         ]
     },
     {
         "type": "enum",
-        "name": "Enum",
+        "name": "Tag",
         "variants": [
             {
-                "name": "A",
-                "associated_type": "Struct"
+                "name": "El",
+                "associated_type": "NNBody"
             },
             {
-                "name": "B",
+                "name": "H",
+                "associated_type": "HContents"
+            },
+            {
+                "name": "P",
+                "associated_type": "NNBody"
+            },
+            {
+                "name": "Br",
                 "associated_type": null
             },
             {
-                "name": "C",
-                "associated_type": "Struct"
+                "name": "Ul",
+                "associated_type": "TagSequence"
+            },
+            {
+                "name": "Ol",
+                "associated_type": "TagSequence"
+            },
+            {
+                "name": "Row",
+                "associated_type": "RowContents"
+            },
+            {
+                "name": "Link",
+                "associated_type": "LinkContents"
+            },
+            {
+                "name": "Navlink",
+                "associated_type": "NavlinkContents"
+            },
+            {
+                "name": "Btn",
+                "associated_type": "BtnContents"
+            },
+            {
+                "name": "Navbtn",
+                "associated_type": "NavbtnContents"
+            },
+            {
+                "name": "Img",
+                "associated_type": "TArg"
+            },
+            {
+                "name": "Table",
+                "associated_type": "TagSequence"
+            },
+            {
+                "name": "Trow",
+                "associated_type": "TagSequence"
+            },
+            {
+                "name": "Tprow",
+                "associated_type": "TagSequence"
+            },
+            {
+                "name": "Hr",
+                "associated_type": null
+            },
+            {
+                "name": "B",
+                "associated_type": "TBody"
+            },
+            {
+                "name": "I",
+                "associated_type": "TBody"
+            },
+            {
+                "name": "Bq",
+                "associated_type": "NNBody"
+            },
+            {
+                "name": "Footlnk",
+                "associated_type": "NNArg"
+            },
+            {
+                "name": "Footn",
+                "associated_type": "FootnContents"
+            },
+            {
+                "name": "A",
+                "associated_type": "NNArg"
+            },
+            {
+                "name": "S",
+                "associated_type": "TBody"
+            },
+            {
+                "name": "Sup",
+                "associated_type": "TBody"
+            },
+            {
+                "name": "Sub",
+                "associated_type": "TBody"
+            },
+            {
+                "name": "Disc",
+                "associated_type": "NNBody"
+            },
+            {
+                "name": "Block",
+                "associated_type": "BlockContents"
+            },
+            {
+                "name": "Carousel",
+                "associated_type": "TagSequence"
+            },
+            {
+                "name": "Code",
+                "associated_type": "CodeContents"
+            },
+            {
+                "name": "Pre",
+                "associated_type": "TBody"
+            },
+            {
+                "name": "Meta",
+                "associated_type": "MetaContents"
             }
         ]
     },
     {
-        "type": "sequence",
-        "name": "Sequence",
-        "content_type": "Enum"
+        "type": "string",
+        "name": "TBody"
+    },
+    {
+        "type": "enum",
+        "name": "Hl",
+        "variants": [
+            {
+                "name": "One",
+                "associated_type": null
+            },
+            {
+                "name": "Two",
+                "associated_type": null
+            },
+            {
+                "name": "Three",
+                "associated_type": null
+            },
+            {
+                "name": "Four",
+                "associated_type": null
+            },
+            {
+                "name": "Five",
+                "associated_type": null
+            },
+            {
+                "name": "Six",
+                "associated_type": null
+            }
+        ]
+    },
+    {
+        "type": "enum",
+        "name": "AlignArg",
+        "variants": [
+            {
+                "name": "Start",
+                "associated_type": null
+            },
+            {
+                "name": "Center",
+                "associated_type": null
+            },
+            {
+                "name": "End",
+                "associated_type": null
+            }
+        ]
+    },
+    {
+        "type": "enum",
+        "name": "Body",
+        "variants": [
+            {
+                "name": "Text",
+                "associated_type": "DaletString"
+            },
+            {
+                "name": "Tags",
+                "associated_type": "TagSequence"
+            },
+            {
+                "name": "Null",
+                "associated_type": null
+            }
+        ]
+    },
+    {
+        "type": "enum",
+        "name": "NNBody",
+        "variants": [
+            {
+                "name": "Text",
+                "associated_type": "DaletString"
+            },
+            {
+                "name": "Tags",
+                "associated_type": "TagSequence"
+            }
+        ]
+    },
+    {
+        "type": "enum",
+        "name": "TNullArg",
+        "variants": [
+            {
+                "name": "Text",
+                "associated_type": "DaletString"
+            },
+            {
+                "name": "Null",
+                "associated_type": null
+            }
+        ]
+    },
+    {
+        "type": "string",
+        "name": "TArg"
+    },
+    {
+        "type": "enum",
+        "name": "NNArg",
+        "variants": [
+            {
+                "name": "Text",
+                "associated_type": "DaletString"
+            },
+            {
+                "name": "Number",
+                "associated_type": "ArgNumber"
+            }
+        ]
+    },
+    {
+        "type": "number",
+        "name": "ArgNumber",
+        "base": "256"
     }
 ]

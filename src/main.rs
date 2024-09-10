@@ -1,60 +1,136 @@
 mod entities;
-mod number;
+mod operations;
 use num_bigint::BigUint;
 
-use entities::{Enum, MyString, NumberA, Sequence, Struct};
-use number::{represent, Base};
+use entities::*;
+use operations::represent;
 
 fn main() {
-    let sequence = Sequence {
+    let original_page = Page {
         items: vec![
-            Enum::A(Struct {
-                number_a: NumberA {
-                    value: BigUint::from(5usize),
+            Tag::H(HContents {
+                tbody: TBody {
+                    contents: "Heading 1".into(),
                 },
-                my_string: MyString {
-                    contents: String::from("hello!"),
-                },
+                hl: Hl::One(),
             }),
-            Enum::C(Struct {
-                number_a: NumberA {
-                    value: BigUint::from(10usize),
+            Tag::H(HContents {
+                tbody: TBody {
+                    contents: "Heading 2".into(),
                 },
-                my_string: MyString {
-                    contents: String::from("hi!"),
-                },
+                hl: Hl::Two(),
             }),
-            Enum::A(Struct {
-                number_a: NumberA {
-                    value: BigUint::from(0usize),
+            Tag::P(NNBody::Tags(TagSequence {
+                items: vec![
+                    Tag::El(NNBody::Text(DaletString {
+                        contents: "Some ".into(),
+                    })),
+                    Tag::B(TBody {
+                        contents: "bold".into(),
+                    }),
+                    Tag::I(TBody {
+                        contents: "italic".into(),
+                    }),
+                    Tag::S(TBody {
+                        contents: "strike".into(),
+                    }),
+                ],
+            })),
+            Tag::Br(),
+            Tag::Code(CodeContents {
+                tbody: TBody {
+                    contents: "Hello world".into(),
                 },
-                my_string: MyString {
-                    contents: String::from("*laughter*"),
-                },
+                tnullarg: TNullArg::Null(),
             }),
-            Enum::B(),
+            Tag::Br(),
+            Tag::Ul(TagSequence {
+                items: vec![
+                    Tag::El(NNBody::Text(DaletString {
+                        contents: "abc".into(),
+                    })),
+                    Tag::El(NNBody::Tags(TagSequence {
+                        items: vec![
+                            Tag::El(NNBody::Text(DaletString {
+                                contents: "def".into(),
+                            })),
+                            Tag::Ul(TagSequence {
+                                items: vec![
+                                    Tag::El(NNBody::Text(DaletString {
+                                        contents: "defabc".into(),
+                                    })),
+                                    Tag::El(NNBody::Text(DaletString {
+                                        contents: "defdef".into(),
+                                    })),
+                                ],
+                            }),
+                        ],
+                    })),
+                    Tag::El(NNBody::Text(DaletString {
+                        contents: "xyz".into(),
+                    })),
+                ],
+            }),
+            Tag::Br(),
+            Tag::P(NNBody::Tags(TagSequence {
+                items: vec![
+                    Tag::El(NNBody::Text(DaletString {
+                        contents: "Lorem ipsum ".into(),
+                    })),
+                    Tag::Link(LinkContents {
+                        body: Body::Tags(TagSequence {
+                            items: vec![Tag::Img(TArg {
+                                contents: "https://my-picture".into(),
+                            })],
+                        }),
+                        targ: TArg {
+                            contents: "https://some-link".into(),
+                        },
+                    }),
+                    Tag::El(NNBody::Text(DaletString {
+                        contents: " dolor sit amet consequetur adipiscing elit".into(),
+                    })),
+                ],
+            })),
+            Tag::Table(TagSequence {
+                items: vec![
+                    Tag::Tprow(TagSequence {
+                        items: vec![
+                            Tag::El(NNBody::Text(DaletString {
+                                contents: "Col 1".into(),
+                            })),
+                            Tag::El(NNBody::Text(DaletString {
+                                contents: "Col 2".into(),
+                            })),
+                            Tag::El(NNBody::Text(DaletString {
+                                contents: "Col 3".into(),
+                            })),
+                        ],
+                    }),
+                    Tag::Trow(TagSequence {
+                        items: vec![
+                            Tag::El(NNBody::Text(DaletString {
+                                contents: "Never gonna".into(),
+                            })),
+                            Tag::El(NNBody::Text(DaletString {
+                                contents: "give you".into(),
+                            })),
+                            Tag::El(NNBody::Text(DaletString {
+                                contents: "up".into(),
+                            })),
+                        ],
+                    }),
+                ],
+            }),
         ],
     };
     let mut number = BigUint::ZERO;
-    sequence.encode(&mut number);
-    let sequence = Sequence::decode(&mut number.clone());
-    println!("{:?}", sequence);
+    original_page.encode(&mut number);
     println!(
-        "{:?}",
-        represent(
-            number.clone(),
-            Base {
-                value: BigUint::from(256usize)
-            }
-        )
+        "The encoded version takes {} bits or {} bytes",
+        represent(number.clone(), &BigUint::from(2usize)).len(),
+        represent(number.clone(), &BigUint::from(256usize)).len(),
     );
-    println!(
-        "{:?}",
-        represent(
-            number.clone(),
-            Base {
-                value: BigUint::from(2usize)
-            }
-        )
-    );
+    let decoded_page = Page::decode(&mut number);
+    assert_eq!(original_page, decoded_page);
 }
