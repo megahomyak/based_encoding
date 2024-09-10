@@ -10,6 +10,7 @@ fn represent(mut number: BigUint, base: &BigUint) -> Vec<BigUint> {
     while number != BigUint::ZERO {
         digits.push(read(&mut number, &base));
     }
+    digits.reverse();
     digits
 }
 
