@@ -1,74 +1,85 @@
-use num_bigint::BigUint;
+mod uint {
+    use num_bigint::BigUint;
 
-/*
-pub struct Uint {
-    value: BigUint,
-}
-impl Uint {
-    pub fn new(value: BigUint) -> Self {
-        Self { value }
+    #[derive(PartialEq, Eq, PartialOrd, Ord)]
+    pub struct Uint {
+        value: BigUint,
     }
-    pub fn increment(&self) -> Uint {
-        Uint { value: &self.value + 1u8 }
+    impl Uint {
+        pub fn new(value: BigUint) -> Self {
+            Self { value }
+        }
+        pub fn increment(&self) -> Uint {
+            Uint {
+                value: &self.value + 1u8,
+            }
+        }
+        pub fn decrement(&self) -> Option<Uint> {
+            if self.is_zero() {
+                None
+            } else {
+                Some(Uint {
+                    value: &self.value - 1u8,
+                })
+            }
+        }
+        pub fn is_zero(&self) -> bool {
+            self.value == BigUint::ZERO
+        }
     }
-    pub fn decrement(&self) -> Option<Uint> {
-        if self.value == BigUint::ZERO {
-            None
-        } else {
-            Some(Uint { value })
+    impl std::fmt::Debug for Uint {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            std::fmt::Debug::fmt(&self.value, f)
+        }
+    }
+    impl std::ops::Rem for Uint {
+        type Output = Self;
+
+        fn rem(self, rhs: Self) -> Self::Output {
+            Self {
+                value: std::ops::Rem::rem(rhs),
+            }
         }
     }
 }
-*/
+pub use uint::Uint;
 
 #[derive(Debug)]
 pub struct Base {
-    value: BigUint,
+    value: Uint,
 }
 impl Base {
-    pub fn new(value: BigUint) -> Option<Self> {
-        if value > BigUint::ZERO {
-            Some(Self { value })
-        } else {
+    pub fn new(value: Uint) -> Option<Self> {
+        if value.is_zero() {
             None
+        } else {
+            Some(Self { value })
         }
     }
 
     pub fn increment(&self) -> Self {
         Base {
-            value: &self.value + 1u8,
+            value: self.value.increment(),
         }
-    }
-
-    pub fn value(&self) -> &BigUint {
-        &self.value
     }
 }
 
 #[derive(Debug)]
 pub struct Digit {
     base: Base,
-    value: BigUint,
+    value: Uint,
 }
 impl Digit {
-    pub fn new(value: BigUint, base: Base) -> Option<Self> {
+    pub fn new(value: Uint, base: Base) -> Option<Self> {
         if base.value > value {
             Some(Self { base, value })
         } else {
             None
         }
     }
-
-    pub fn value(&self) -> &BigUint {
-        &self.value
-    }
-
-    pub fn base(&self) -> &Base {
-        &self.base
-    }
 }
 
-pub fn read(number: &mut BigUint, base: &Base) -> BigUint {
+pub fn read(number: &mut Uint, base: &Base) -> Uint {
     let output = &*number % &base.value;
     *number /= &base.value;
     output
