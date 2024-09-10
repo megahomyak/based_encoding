@@ -143,5 +143,6 @@ fn main() {
         encoder.finish().unwrap().len()
     });
     let decoded_page = Page::decode(&mut number);
+    assert_eq!(number, BigUint::ZERO);
     assert_eq!(original_page, decoded_page);
 }
