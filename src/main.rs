@@ -26,8 +26,8 @@ mod number_a {
         digit: Digit,
     }
     impl NumberA {
-        pub fn new(value: u32) -> Option<Self> {
-            Digit::new(s::biguint(value), Self::base()).map(|digit| Self { digit })
+        pub fn new(value: BigUint) -> Option<Self> {
+            Digit::new(value, Self::base()).map(|digit| Self { digit })
         }
         pub fn base() -> Base {
             s::base(18)
@@ -53,8 +53,8 @@ mod number_b {
         digit: Digit,
     }
     impl NumberB {
-        pub fn new(value: u32) -> Option<Self> {
-            Digit::new(s::biguint(value), Self::base()).map(|digit| Self { digit })
+        pub fn new(value: BigUint) -> Option<Self> {
+            Digit::new(value, Self::base()).map(|digit| Self { digit })
         }
         pub fn base() -> Base {
             s::base(544)
