@@ -131,6 +131,17 @@ fn main() {
         represent(number.clone(), &BigUint::from(2usize)).len(),
         represent(number.clone(), &BigUint::from(256usize)).len(),
     );
+    println!("The compressed version takes {} bytes", {
+        use std::io::Write;
+        let bytes: Vec<u8> = represent(number.clone(), &BigUint::from(256usize))
+            .into_iter()
+            .map(|num| num.try_into().unwrap())
+            .collect();
+        let mut encoder =
+            flate2::write::ZlibEncoder::new(Vec::new(), flate2::Compression::default());
+        encoder.write_all(&bytes).unwrap();
+        encoder.finish().unwrap().len()
+    });
     let decoded_page = Page::decode(&mut number);
     assert_eq!(original_page, decoded_page);
 }
