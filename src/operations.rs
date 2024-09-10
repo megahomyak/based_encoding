@@ -13,11 +13,3 @@ pub fn write(number: &mut BigUint, base: &BigUint, value: &BigUint) {
     }
     *number = &*number * base + value;
 }
-
-pub fn represent(mut number: BigUint, base: &BigUint) -> Vec<BigUint> {
-    let mut digits = Vec::new();
-    while number != BigUint::ZERO {
-        digits.push(read(&mut number, &base));
-    }
-    digits
-}

@@ -3,7 +3,15 @@ mod operations;
 use num_bigint::BigUint;
 
 use entities::*;
-use operations::represent;
+
+fn represent(mut number: BigUint, base: &BigUint) -> Vec<BigUint> {
+    use operations::read;
+    let mut digits = Vec::new();
+    while number != BigUint::ZERO {
+        digits.push(read(&mut number, &base));
+    }
+    digits
+}
 
 fn main() {
     let original_page = Page {
