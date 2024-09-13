@@ -1,6 +1,6 @@
 mod entities;
 mod operations;
-use num_bigint::BigUint;
+mod bigint;
 
 use entities::*;
 
