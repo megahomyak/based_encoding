@@ -4,7 +4,7 @@ pub struct BigInt {
 }
 
 pub struct DivisionResult {
-    amount: BigInt,
+    quotient: BigInt,
     remainder: BigInt,
 }
 
@@ -13,7 +13,7 @@ impl BigInt {
         Self { digits: Vec::new() }
     }
 
-    pub fn subtract(mut self, mut other: Self) -> Option<Self> {
+    pub fn subtract(&self, other: &Self) -> Option<Self> {
         todo!()
     }
 
@@ -23,25 +23,23 @@ impl BigInt {
         let mut result_digits = Vec::new();
         let mut is_overflowed = false;
         loop {
-            let self_digit = match self_digits.next() {
-                Some(n) => *n,
-                None => 0,
-            };
-            let other_digit = match other_digits.next() {
-                Some(n) => *n,
-                None => 0,
-            };
-            if self_digit == 0 && other_digit == 0 && !is_overflowed {
+            let self_digit = self_digits.next();
+            let other_digit = other_digits.next();
+            if self_digit.is_none() && other_digit.is_none() && !is_overflowed {
                 break;
             }
-            let (mut result_digit, new_is_overflowed) = self_digit.overflowing_add(other_digit);
+            let (mut result_digit, new_is_overflowed) = self_digit
+                .unwrap_or(&0)
+                .overflowing_add(*other_digit.unwrap_or(&0));
             if is_overflowed {
                 result_digit = result_digit.checked_add(1).unwrap();
             }
             result_digits.push(result_digit);
             is_overflowed = new_is_overflowed;
         }
-        Self { digits: result_digits }
+        Self {
+            digits: result_digits,
+        }
     }
 
     pub fn multiply(&mut self, mut factor: Self) {
@@ -73,11 +71,16 @@ mod tests {
             vec![4, 1]
         );
         assert_eq!(
-            BigInt::from(usize::MAX).add(&BigInt::from(usize::MAX)).digits,
+            BigInt::from(usize::MAX)
+                .add(&BigInt::from(usize::MAX))
+                .digits,
             vec![usize::MAX - 1, 1]
         );
         assert_eq!(
-            BigInt::from(usize::MAX).add(&BigInt::from(usize::MAX)).add(&BigInt::from(usize::MAX)).digits,
+            BigInt::from(usize::MAX)
+                .add(&BigInt::from(usize::MAX))
+                .add(&BigInt::from(usize::MAX))
+                .digits,
             vec![usize::MAX - 2, 2]
         );
     }
