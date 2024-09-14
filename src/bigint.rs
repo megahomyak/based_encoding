@@ -1,8 +1,5 @@
 #[derive(Clone, PartialEq, Eq)]
 pub struct BigInt {
-    // Actually these aren't even regular digits, the new one appears when the last one reaches its
-    // maximum value, and then that other digit isn't reset to "0". It's done to keep the
-    // implementation simple, but it takes much more space in memory than it could have taken with regular digits
     digits: Vec<usize>,
 }
 
@@ -16,70 +13,72 @@ impl BigInt {
         Self { digits: Vec::new() }
     }
 
-    pub fn decrement(mut self) -> Option<Self> {
-        let last = self.digits.pop()?;
-        if last != 0 {
-            self.digits.push(last - 1);
-        }
-        Some(self)
-    }
-
-    pub fn increment(&mut self) {
-        match self.digits.last_mut() {
-            None => self.digits.push(0),
-            Some(digit) => match digit.checked_add(1) {
-                Some(new_value) => *digit = new_value,
-                None => self.digits.push(0),
-            },
-        }
-    }
-
     pub fn subtract(mut self, mut other: Self) -> Option<Self> {
-        while let Some(new_other) = other.decrement() {
-            other = new_other;
-            self = self.decrement()?;
-        }
-        Some(self)
+        todo!()
     }
 
-    pub fn add(&mut self, mut other: Self) {
-        while let Some(new_other) = other.decrement() {
-            other = new_other;
-            self.increment();
+    pub fn add(&self, other: &Self) -> Self {
+        let mut self_digits = self.digits.iter();
+        let mut other_digits = other.digits.iter();
+        let mut result_digits = Vec::new();
+        let mut is_overflowed = false;
+        loop {
+            let self_digit = match self_digits.next() {
+                Some(n) => *n,
+                None => 0,
+            };
+            let other_digit = match other_digits.next() {
+                Some(n) => *n,
+                None => 0,
+            };
+            if self_digit == 0 && other_digit == 0 && !is_overflowed {
+                break;
+            }
+            let (mut result_digit, new_is_overflowed) = self_digit.overflowing_add(other_digit);
+            if is_overflowed {
+                result_digit = result_digit.checked_add(1).unwrap();
+            }
+            result_digits.push(result_digit);
+            is_overflowed = new_is_overflowed;
         }
+        Self { digits: result_digits }
     }
 
     pub fn multiply(&mut self, mut factor: Self) {
-        let mut result = Self::zero();
-        while let Some(new_other) = factor.decrement() {
-            factor = new_other;
-            result.add(Clone::clone(self));
-        }
-        *self = result;
+        todo!()
     }
 
     pub fn divide(mut self, other: Self) -> DivisionResult {
-        let mut amount = Self::zero();
-        let remainder = loop {
-            match self.clone().subtract(other.clone()) {
-                None => break self,
-                Some(new_self) => {
-                    amount.increment();
-                    self = new_self;
-                }
-            }
-        };
-        DivisionResult { amount, remainder }
+        todo!()
     }
 }
 
 impl From<usize> for BigInt {
-    fn from(mut value: usize) -> Self {
-        let mut result = Self::zero();
-        while value != 0 {
-            result.increment();
-            value -= 1;
+    fn from(value: usize) -> Self {
+        Self {
+            digits: vec![value],
         }
-        result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_addition() {
+        assert_eq!(BigInt::from(5).add(&BigInt::from(15)).digits, vec![20]);
+        assert_eq!(
+            BigInt::from(5).add(&BigInt::from(usize::MAX)).digits,
+            vec![4, 1]
+        );
+        assert_eq!(
+            BigInt::from(usize::MAX).add(&BigInt::from(usize::MAX)).digits,
+            vec![usize::MAX - 1, 1]
+        );
+        assert_eq!(
+            BigInt::from(usize::MAX).add(&BigInt::from(usize::MAX)).add(&BigInt::from(usize::MAX)).digits,
+            vec![usize::MAX - 2, 2]
+        );
     }
 }

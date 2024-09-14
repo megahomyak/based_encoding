@@ -1,6 +1,7 @@
+mod bigint;
+/*
 mod entities;
 mod operations;
-mod bigint;
 
 use entities::*;
 
@@ -155,3 +156,4 @@ fn main() {
     assert_eq!(number, BigUint::ZERO);
     assert_eq!(original_page, decoded_page);
 }
+*/
