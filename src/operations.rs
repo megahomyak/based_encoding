@@ -1,15 +1,16 @@
-use crate::bigint::BigUInt;
+use num_bigint::BigUint;
+use num_integer::Integer;
 
-pub fn read(number: &mut BigUInt, base: &BigUInt) -> BigUInt {
-    let division_result = number.divide(base);
-    *number = division_result.quotient;
-    division_result.remainder
+pub fn read(number: &mut BigUint, base: &BigUint) -> BigUint {
+    let (quotient, remainder) = number.div_rem(base);
+    *number = quotient;
+    remainder
 }
 
-pub fn write(number: &mut BigUInt, base: &BigUInt, value: &BigUInt) {
+pub fn write(number: &mut BigUint, base: &BigUint, value: &BigUint) {
     #[cfg(debug_assertions)]
     if value >= base {
         panic!("Value too big for base: value {value:?} vs base {base:?}");
     }
-    *number = number.multiply(base).add(value);
+    *number = &*number * base + value;
 }
