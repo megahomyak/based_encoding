@@ -1,15 +1,15 @@
 use crate::biguint::BigUInt;
 
-pub fn read<N: BigUInt>(number: &mut N, base: &N) -> N {
+pub fn read(number: &mut BigUInt, base: &BigUInt) -> BigUInt {
     let division_result = number.divide(base);
     *number = division_result.quotient;
     division_result.remainder
 }
 
-pub fn write<N: BigUInt>(number: &mut N, base: &N, value: &N) {
+pub fn write(number: &mut BigUInt, base: &BigUInt, value: &BigUInt) {
     #[cfg(debug_assertions)]
     if value >= base {
         panic!("Value too big for base: value {value:?} vs base {base:?}");
     }
-    *number = number.multiply(base).add(value);
+    *number = &(&*number * base) + value;
 }

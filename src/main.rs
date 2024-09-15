@@ -5,9 +5,9 @@ mod operations;
 use biguint::BigUInt;
 use entities::*;
 
-fn represent<N: BigUInt>(mut number: N, base: &N) -> Vec<N> {
+fn represent(mut number: BigUInt, base: &BigUInt) -> Vec<BigUInt> {
     let mut digits = Vec::new();
-    while number != N::from(0usize) {
+    while &number != &BigUInt::from(0usize) {
         digits.push(operations::read(&mut number, &base));
     }
     digits.reverse();
@@ -133,16 +133,16 @@ fn main() {
             }),
         ],
     };
-    let mut number = num_bigint::BigUint::from(0usize);
+    let mut number = BigUInt::from(0usize);
     original_page.encode(&mut number);
     println!(
         "The encoded version takes {} bits or {} bytes",
-        represent(number.clone(), &num_bigint::BigUint::from(2usize)).len(),
-        represent(number.clone(), &num_bigint::BigUint::from(256usize)).len(),
+        represent(number.clone(), &BigUInt::from(2usize)).len(),
+        represent(number.clone(), &BigUInt::from(256usize)).len(),
     );
     println!("The compressed version takes {} bytes", {
         use std::io::Write;
-        let bytes: Vec<u8> = represent(number.clone(), &num_bigint::BigUint::from(256usize))
+        let bytes: Vec<u8> = represent(number.clone(), &BigUInt::from(256usize))
             .into_iter()
             .map(|num| (&num).try_into().unwrap())
             .collect();
@@ -152,6 +152,6 @@ fn main() {
         encoder.finish().unwrap().len()
     });
     let decoded_page = Page::decode(&mut number);
-    assert_eq!(number, num_bigint::BigUint::from(0usize));
+    assert_eq!(&number, &BigUInt::from(0usize));
     assert_eq!(original_page, decoded_page);
 }
