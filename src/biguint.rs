@@ -3,6 +3,7 @@ pub struct DivisionResult {
     pub remainder: BigUInt,
 }
 
+#[derive(Clone)]
 pub struct BigUInt {
     value: num_bigint::BigUint,
 }
@@ -76,14 +77,6 @@ impl From<usize> for BigUInt {
     fn from(value: usize) -> Self {
         Self {
             value: value.into(),
-        }
-    }
-}
-
-impl Clone for BigUInt {
-    fn clone(&self) -> Self {
-        Self {
-            value: self.value.clone(),
         }
     }
 }
