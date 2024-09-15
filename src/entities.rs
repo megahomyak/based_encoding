@@ -2,7 +2,7 @@
 use crate::biguint::BigUInt;
 use crate::operations::{read, write};
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq)]
 pub struct Page {
     pub items: Vec<Tag>,
 }
@@ -10,14 +10,14 @@ pub struct Page {
 impl Page {
     #[allow(dead_code)]
     pub fn base() -> BigUInt {
-        Tag::base() + BigUInt::from(1usize)
+        &Tag::base() + &BigUInt::from(1usize)
     }
     pub fn encode(&self, number: &mut BigUInt) {
         write(number, &Self::base(), &BigUInt::from(0usize));
         for item in self.items.iter().rev() {
             item.encode(number);
             let item = read(number, &Tag::base());
-            write(number, &Self::base(), &(item + &BigUInt::from(1usize)));
+            write(number, &Self::base(), &(&item + &BigUInt::from(1usize)));
         }
     }
     pub fn decode(number: &mut BigUInt) -> Self {
@@ -34,7 +34,21 @@ impl Page {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+impl std::fmt::Debug for Page {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("Page [")?;
+        for (index, item) in self.items.iter().enumerate() {
+            std::fmt::Debug::fmt(item, f)?;
+            if index != self.items.len() - 1 {
+                f.write_str(", ")?;
+            }
+        }
+        f.write_str("]")?;
+        Ok(())
+    }
+}
+
+#[derive(PartialEq, Eq)]
 pub struct TagSequence {
     pub items: Vec<Tag>,
 }
@@ -42,14 +56,14 @@ pub struct TagSequence {
 impl TagSequence {
     #[allow(dead_code)]
     pub fn base() -> BigUInt {
-        Tag::base() + BigUInt::from(1usize)
+        &Tag::base() + &BigUInt::from(1usize)
     }
     pub fn encode(&self, number: &mut BigUInt) {
         write(number, &Self::base(), &BigUInt::from(0usize));
         for item in self.items.iter().rev() {
             item.encode(number);
             let item = read(number, &Tag::base());
-            write(number, &Self::base(), &(item + &BigUInt::from(1usize)));
+            write(number, &Self::base(), &(&item + &BigUInt::from(1usize)));
         }
     }
     pub fn decode(number: &mut BigUInt) -> Self {
@@ -66,7 +80,21 @@ impl TagSequence {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+impl std::fmt::Debug for TagSequence {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("TagSequence [")?;
+        for (index, item) in self.items.iter().enumerate() {
+            std::fmt::Debug::fmt(item, f)?;
+            if index != self.items.len() - 1 {
+                f.write_str(", ")?;
+            }
+        }
+        f.write_str("]")?;
+        Ok(())
+    }
+}
+
+#[derive(PartialEq, Eq)]
 pub struct DaletString {
     pub contents: std::string::String,
 }
@@ -86,7 +114,7 @@ impl DaletString {
         let mut bytes = Vec::new();
         loop {
             let byte = read(number, &Self::base());
-            if byte == BigUInt::from(0usize) {
+            if &byte == &BigUInt::from(0usize) {
                 break;
             }
             bytes.push(u8::try_from(&byte).unwrap());
@@ -97,7 +125,13 @@ impl DaletString {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+impl std::fmt::Debug for DaletString {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Debug::fmt(&self.contents, f)
+    }
+}
+
+#[derive(PartialEq, Eq, Debug)]
 pub struct HContents {
     pub tbody: TBody,
     pub hl: Hl,
@@ -119,7 +153,7 @@ impl HContents {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct RowContents {
     pub tags: TagSequence,
     pub alignment: AlignArg,
@@ -141,7 +175,7 @@ impl RowContents {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct LinkContents {
     pub body: Body,
     pub targ: TArg,
@@ -163,7 +197,7 @@ impl LinkContents {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct NavlinkContents {
     pub body: Body,
     pub targ: TArg,
@@ -185,7 +219,7 @@ impl NavlinkContents {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct BtnContents {
     pub body: Body,
     pub targ: TArg,
@@ -207,7 +241,7 @@ impl BtnContents {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct FootnContents {
     pub tbody: TBody,
     pub nnarg: NNArg,
@@ -229,7 +263,7 @@ impl FootnContents {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct NavbtnContents {
     pub body: Body,
     pub targ: TArg,
@@ -251,7 +285,7 @@ impl NavbtnContents {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct BlockContents {
     pub nnbody: NNBody,
     pub alignment: AlignArg,
@@ -273,7 +307,7 @@ impl BlockContents {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct CodeContents {
     pub tbody: TBody,
     pub tnullarg: TNullArg,
@@ -295,7 +329,7 @@ impl CodeContents {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct MetaContents {
     pub tbody: TBody,
     pub targ: TArg,
@@ -317,7 +351,7 @@ impl MetaContents {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum Tag {
     El(NNBody),
     H(HContents),
@@ -485,125 +519,125 @@ impl Tag {
     }
     pub fn decode(number: &mut BigUInt) -> Self {
         let num = read(number, &Self::base());
-        if num == BigUInt::from(0usize) {
+        if &num == &BigUInt::from(0usize) {
             let associated_value = NNBody::decode(number);
             return Self::El(associated_value);
         }
-        if num == BigUInt::from(1usize) {
+        if &num == &BigUInt::from(1usize) {
             let associated_value = HContents::decode(number);
             return Self::H(associated_value);
         }
-        if num == BigUInt::from(2usize) {
+        if &num == &BigUInt::from(2usize) {
             let associated_value = NNBody::decode(number);
             return Self::P(associated_value);
         }
-        if num == BigUInt::from(3usize) {
+        if &num == &BigUInt::from(3usize) {
             return Self::Br();
         }
-        if num == BigUInt::from(4usize) {
+        if &num == &BigUInt::from(4usize) {
             let associated_value = TagSequence::decode(number);
             return Self::Ul(associated_value);
         }
-        if num == BigUInt::from(5usize) {
+        if &num == &BigUInt::from(5usize) {
             let associated_value = TagSequence::decode(number);
             return Self::Ol(associated_value);
         }
-        if num == BigUInt::from(6usize) {
+        if &num == &BigUInt::from(6usize) {
             let associated_value = RowContents::decode(number);
             return Self::Row(associated_value);
         }
-        if num == BigUInt::from(7usize) {
+        if &num == &BigUInt::from(7usize) {
             let associated_value = LinkContents::decode(number);
             return Self::Link(associated_value);
         }
-        if num == BigUInt::from(8usize) {
+        if &num == &BigUInt::from(8usize) {
             let associated_value = NavlinkContents::decode(number);
             return Self::Navlink(associated_value);
         }
-        if num == BigUInt::from(9usize) {
+        if &num == &BigUInt::from(9usize) {
             let associated_value = BtnContents::decode(number);
             return Self::Btn(associated_value);
         }
-        if num == BigUInt::from(10usize) {
+        if &num == &BigUInt::from(10usize) {
             let associated_value = NavbtnContents::decode(number);
             return Self::Navbtn(associated_value);
         }
-        if num == BigUInt::from(11usize) {
+        if &num == &BigUInt::from(11usize) {
             let associated_value = TArg::decode(number);
             return Self::Img(associated_value);
         }
-        if num == BigUInt::from(12usize) {
+        if &num == &BigUInt::from(12usize) {
             let associated_value = TagSequence::decode(number);
             return Self::Table(associated_value);
         }
-        if num == BigUInt::from(13usize) {
+        if &num == &BigUInt::from(13usize) {
             let associated_value = TagSequence::decode(number);
             return Self::Trow(associated_value);
         }
-        if num == BigUInt::from(14usize) {
+        if &num == &BigUInt::from(14usize) {
             let associated_value = TagSequence::decode(number);
             return Self::Tprow(associated_value);
         }
-        if num == BigUInt::from(15usize) {
+        if &num == &BigUInt::from(15usize) {
             return Self::Hr();
         }
-        if num == BigUInt::from(16usize) {
+        if &num == &BigUInt::from(16usize) {
             let associated_value = TBody::decode(number);
             return Self::B(associated_value);
         }
-        if num == BigUInt::from(17usize) {
+        if &num == &BigUInt::from(17usize) {
             let associated_value = TBody::decode(number);
             return Self::I(associated_value);
         }
-        if num == BigUInt::from(18usize) {
+        if &num == &BigUInt::from(18usize) {
             let associated_value = NNBody::decode(number);
             return Self::Bq(associated_value);
         }
-        if num == BigUInt::from(19usize) {
+        if &num == &BigUInt::from(19usize) {
             let associated_value = NNArg::decode(number);
             return Self::Footlnk(associated_value);
         }
-        if num == BigUInt::from(20usize) {
+        if &num == &BigUInt::from(20usize) {
             let associated_value = FootnContents::decode(number);
             return Self::Footn(associated_value);
         }
-        if num == BigUInt::from(21usize) {
+        if &num == &BigUInt::from(21usize) {
             let associated_value = NNArg::decode(number);
             return Self::A(associated_value);
         }
-        if num == BigUInt::from(22usize) {
+        if &num == &BigUInt::from(22usize) {
             let associated_value = TBody::decode(number);
             return Self::S(associated_value);
         }
-        if num == BigUInt::from(23usize) {
+        if &num == &BigUInt::from(23usize) {
             let associated_value = TBody::decode(number);
             return Self::Sup(associated_value);
         }
-        if num == BigUInt::from(24usize) {
+        if &num == &BigUInt::from(24usize) {
             let associated_value = TBody::decode(number);
             return Self::Sub(associated_value);
         }
-        if num == BigUInt::from(25usize) {
+        if &num == &BigUInt::from(25usize) {
             let associated_value = NNBody::decode(number);
             return Self::Disc(associated_value);
         }
-        if num == BigUInt::from(26usize) {
+        if &num == &BigUInt::from(26usize) {
             let associated_value = BlockContents::decode(number);
             return Self::Block(associated_value);
         }
-        if num == BigUInt::from(27usize) {
+        if &num == &BigUInt::from(27usize) {
             let associated_value = TagSequence::decode(number);
             return Self::Carousel(associated_value);
         }
-        if num == BigUInt::from(28usize) {
+        if &num == &BigUInt::from(28usize) {
             let associated_value = CodeContents::decode(number);
             return Self::Code(associated_value);
         }
-        if num == BigUInt::from(29usize) {
+        if &num == &BigUInt::from(29usize) {
             let associated_value = TBody::decode(number);
             return Self::Pre(associated_value);
         }
-        if num == BigUInt::from(30usize) {
+        if &num == &BigUInt::from(30usize) {
             let associated_value = MetaContents::decode(number);
             return Self::Meta(associated_value);
         }
@@ -611,7 +645,7 @@ impl Tag {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq)]
 pub struct TBody {
     pub contents: std::string::String,
 }
@@ -631,7 +665,7 @@ impl TBody {
         let mut bytes = Vec::new();
         loop {
             let byte = read(number, &Self::base());
-            if byte == BigUInt::from(0usize) {
+            if &byte == &BigUInt::from(0usize) {
                 break;
             }
             bytes.push(u8::try_from(&byte).unwrap());
@@ -642,7 +676,13 @@ impl TBody {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+impl std::fmt::Debug for TBody {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Debug::fmt(&self.contents, f)
+    }
+}
+
+#[derive(PartialEq, Eq, Debug)]
 pub enum Hl {
     One(),
     Two(),
@@ -681,29 +721,29 @@ impl Hl {
     }
     pub fn decode(number: &mut BigUInt) -> Self {
         let num = read(number, &Self::base());
-        if num == BigUInt::from(0usize) {
+        if &num == &BigUInt::from(0usize) {
             return Self::One();
         }
-        if num == BigUInt::from(1usize) {
+        if &num == &BigUInt::from(1usize) {
             return Self::Two();
         }
-        if num == BigUInt::from(2usize) {
+        if &num == &BigUInt::from(2usize) {
             return Self::Three();
         }
-        if num == BigUInt::from(3usize) {
+        if &num == &BigUInt::from(3usize) {
             return Self::Four();
         }
-        if num == BigUInt::from(4usize) {
+        if &num == &BigUInt::from(4usize) {
             return Self::Five();
         }
-        if num == BigUInt::from(5usize) {
+        if &num == &BigUInt::from(5usize) {
             return Self::Six();
         }
         unreachable!()
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum AlignArg {
     Start(),
     Center(),
@@ -730,20 +770,20 @@ impl AlignArg {
     }
     pub fn decode(number: &mut BigUInt) -> Self {
         let num = read(number, &Self::base());
-        if num == BigUInt::from(0usize) {
+        if &num == &BigUInt::from(0usize) {
             return Self::Start();
         }
-        if num == BigUInt::from(1usize) {
+        if &num == &BigUInt::from(1usize) {
             return Self::Center();
         }
-        if num == BigUInt::from(2usize) {
+        if &num == &BigUInt::from(2usize) {
             return Self::End();
         }
         unreachable!()
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum Body {
     Text(DaletString),
     Tags(TagSequence),
@@ -772,22 +812,22 @@ impl Body {
     }
     pub fn decode(number: &mut BigUInt) -> Self {
         let num = read(number, &Self::base());
-        if num == BigUInt::from(0usize) {
+        if &num == &BigUInt::from(0usize) {
             let associated_value = DaletString::decode(number);
             return Self::Text(associated_value);
         }
-        if num == BigUInt::from(1usize) {
+        if &num == &BigUInt::from(1usize) {
             let associated_value = TagSequence::decode(number);
             return Self::Tags(associated_value);
         }
-        if num == BigUInt::from(2usize) {
+        if &num == &BigUInt::from(2usize) {
             return Self::Null();
         }
         unreachable!()
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum NNBody {
     Text(DaletString),
     Tags(TagSequence),
@@ -812,11 +852,11 @@ impl NNBody {
     }
     pub fn decode(number: &mut BigUInt) -> Self {
         let num = read(number, &Self::base());
-        if num == BigUInt::from(0usize) {
+        if &num == &BigUInt::from(0usize) {
             let associated_value = DaletString::decode(number);
             return Self::Text(associated_value);
         }
-        if num == BigUInt::from(1usize) {
+        if &num == &BigUInt::from(1usize) {
             let associated_value = TagSequence::decode(number);
             return Self::Tags(associated_value);
         }
@@ -824,7 +864,7 @@ impl NNBody {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum TNullArg {
     Text(DaletString),
     Null(),
@@ -848,18 +888,18 @@ impl TNullArg {
     }
     pub fn decode(number: &mut BigUInt) -> Self {
         let num = read(number, &Self::base());
-        if num == BigUInt::from(0usize) {
+        if &num == &BigUInt::from(0usize) {
             let associated_value = DaletString::decode(number);
             return Self::Text(associated_value);
         }
-        if num == BigUInt::from(1usize) {
+        if &num == &BigUInt::from(1usize) {
             return Self::Null();
         }
         unreachable!()
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq)]
 pub struct TArg {
     pub contents: std::string::String,
 }
@@ -879,7 +919,7 @@ impl TArg {
         let mut bytes = Vec::new();
         loop {
             let byte = read(number, &Self::base());
-            if byte == BigUInt::from(0usize) {
+            if &byte == &BigUInt::from(0usize) {
                 break;
             }
             bytes.push(u8::try_from(&byte).unwrap());
@@ -890,7 +930,13 @@ impl TArg {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+impl std::fmt::Debug for TArg {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Debug::fmt(&self.contents, f)
+    }
+}
+
+#[derive(PartialEq, Eq, Debug)]
 pub enum NNArg {
     Text(DaletString),
     Number(ArgNumber),
@@ -915,11 +961,11 @@ impl NNArg {
     }
     pub fn decode(number: &mut BigUInt) -> Self {
         let num = read(number, &Self::base());
-        if num == BigUInt::from(0usize) {
+        if &num == &BigUInt::from(0usize) {
             let associated_value = DaletString::decode(number);
             return Self::Text(associated_value);
         }
-        if num == BigUInt::from(1usize) {
+        if &num == &BigUInt::from(1usize) {
             let associated_value = ArgNumber::decode(number);
             return Self::Number(associated_value);
         }
@@ -927,7 +973,6 @@ impl NNArg {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
 pub struct ArgNumber {
     pub value: BigUInt,
 }
@@ -944,5 +989,18 @@ impl ArgNumber {
         Self {
             value: read(number, &Self::base()),
         }
+    }
+}
+
+impl PartialEq for ArgNumber {
+    fn eq(&self, other: &Self) -> bool {
+        &self.value == &other.value
+    }
+}
+impl Eq for ArgNumber {}
+
+impl std::fmt::Debug for ArgNumber {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Debug::fmt(&self.value, f)
     }
 }

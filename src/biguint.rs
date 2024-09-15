@@ -1,6 +1,6 @@
-pub struct DivisionResult<N> {
-    pub quotient: N,
-    pub remainder: N,
+pub struct DivisionResult {
+    pub quotient: BigUInt,
+    pub remainder: BigUInt,
 }
 
 pub struct BigUInt {
@@ -8,14 +8,14 @@ pub struct BigUInt {
 }
 
 impl BigUInt {
-    pub fn subtract(&self, other: &Self) -> Option<Self> {
-        num_traits::CheckedSub::checked_sub(self, other)
+    pub fn checked_sub(&self, other: &Self) -> Option<Self> {
+        num_traits::CheckedSub::checked_sub(&self.value, &other.value).map(|value| Self { value })
     }
-    pub fn divide(&self, other: &Self) -> DivisionResult<Self> {
-        let (quotient, remainder) = num_integer::Integer::div_rem(self, other);
+    pub fn divide(&self, other: &Self) -> DivisionResult {
+        let (quotient, remainder) = num_integer::Integer::div_rem(&self.value, &other.value);
         DivisionResult {
-            quotient,
-            remainder,
+            quotient: Self { value: quotient },
+            remainder: Self { value: remainder },
         }
     }
 }
@@ -82,6 +82,8 @@ impl From<usize> for BigUInt {
 
 impl Clone for BigUInt {
     fn clone(&self) -> Self {
-        Self { value: self.value.clone() }
+        Self {
+            value: self.value.clone(),
+        }
     }
 }

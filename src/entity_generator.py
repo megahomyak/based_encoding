@@ -9,7 +9,6 @@ use crate::operations::{read, write};
 use crate::biguint::BigUInt;
 
 {% for entity in entities %}
-    #[derive(Debug, PartialEq, Eq)]
     {%- if entity.type == "number" %}
         pub struct {{ entity.name }} {
             pub value: BigUInt,
@@ -27,7 +26,21 @@ use crate::biguint::BigUInt;
                 Self { value: read(number, &Self::base()) }
             }
         }
+
+        impl PartialEq for {{ entity.name }} {
+            fn eq(&self, other: &Self) -> bool {
+                &self.value == &other.value
+            }
+        }
+        impl Eq for {{ entity.name }} {}
+
+        impl std::fmt::Debug for {{ entity.name }} {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                std::fmt::Debug::fmt(&self.value, f)
+            }
+        }
     {% elif entity.type == "string" %}
+        #[derive(PartialEq, Eq)]
         pub struct {{ entity.name }} {
             pub contents: std::string::String,
         }
@@ -55,7 +68,14 @@ use crate::biguint::BigUInt;
                 Self { contents: std::string::String::from_utf8(bytes).unwrap() }
             }
         }
+
+        impl std::fmt::Debug for {{ entity.name }} {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                std::fmt::Debug::fmt(&self.contents, f)
+            }
+        }
     {% elif entity.type == "struct" %}
+        #[derive(PartialEq, Eq, Debug)]
         pub struct {{ entity.name }} {
             {% for field in entity.fields -%}
                 pub {{ field.name }}: {{ field.type }},
@@ -84,6 +104,7 @@ use crate::biguint::BigUInt;
             }
         }
     {% elif entity.type == "enum" %}
+        #[derive(PartialEq, Eq, Debug)]
         pub enum {{ entity.name }} {
             {% for variant in entity.variants -%}
                 {{ variant.name }}(
@@ -133,6 +154,7 @@ use crate::biguint::BigUInt;
             }
         }
     {% elif entity.type == "sequence" %}
+        #[derive(PartialEq, Eq)]
         pub struct {{ entity.name }} {
             pub items: Vec<{{ entity.content_type }}>,
         }
@@ -140,14 +162,14 @@ use crate::biguint::BigUInt;
         impl {{ entity.name }} {
             #[allow(dead_code)]
             pub fn base() -> BigUInt {
-                {{ entity.content_type }}::base() + BigUInt::from(1usize)
+                &{{ entity.content_type }}::base() + &BigUInt::from(1usize)
             }
             pub fn encode(&self, number: &mut BigUInt) {
                 write(number, &Self::base(), &BigUInt::from(0usize));
                 for item in self.items.iter().rev() {
                     item.encode(number);
                     let item = read(number, &{{ entity.content_type }}::base());
-                    write(number, &Self::base(), &(item + &BigUInt::from(1usize)));
+                    write(number, &Self::base(), &(&item + &BigUInt::from(1usize)));
                 }
             }
             pub fn decode(number: &mut BigUInt) -> Self {
@@ -161,6 +183,20 @@ use crate::biguint::BigUInt;
                     items.push({{ entity.content_type }}::decode(number));
                 }
                 Self { items }
+            }
+        }
+
+        impl std::fmt::Debug for {{ entity.name }} {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                f.write_str("{{ entity.name }} [")?;
+                for (index, item) in self.items.iter().enumerate() {
+                    std::fmt::Debug::fmt(item, f)?;
+                    if index != self.items.len() - 1 {
+                        f.write_str(", ")?;
+                    }
+                }
+                f.write_str("]")?;
+                Ok(())
             }
         }
     {% endif %}
